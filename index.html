@@ -1,1 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danzy Store — Top Up Game Otomatis & Terpercaya</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+    <div id="loading-screen" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p class="loading-text">Memproses Data...</p>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand" onclick="navigateTo('home')">
+                <span class="text-cyan">DANZY</span><span class="text-orange">STORE</span>
+            </a>
+            <div class="nav-links">
+                <button class="nav-btn active" id="nav-home" onclick="navigateTo('home')">Home</button>
+                <button class="nav-btn" id="nav-check" onclick="navigateTo('check')">Cek Transaksi</button>
+                <button class="nav-btn admin-toggle-btn" onclick="toggleAdminPanel()">👑 Admin Mode</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        
+        <section id="view-home" class="view-section">
+            <div class="promo-banner">
+                <div class="banner-slide">
+                    <div class="banner-badge">PROMO MINGGU INI</div>
+                    <h2>Genshin & MLBB Megasale up to 30% Off!</h2>
+                    <p>Top up instan 24 jam nonstop dengan metode pembayaran terlengkap.</p>
+                </div>
+            </div>
+
+            <div class="section-title-wrap">
+                <h3 class="section-title">Pilih Game Favoritmu</h3>
+                <p class="section-subtitle">Proses otomatis, masuk dalam hitungan detik</p>
+            </div>
+            
+            <div class="game-grid" id="game-list-container">
+                </div>
+        </section>
+
+        <section id="view-game-detail" class="view-section hidden">
+            <button class="back-btn" onclick="navigateTo('home')">← Kembali ke Beranda</button>
+            
+            <div class="detail-layout">
+                <div class="game-info-panel glass-card">
+                    <img id="detail-game-image" src="" alt="Game Cover" class="detail-game-img">
+                    <h2 id="detail-game-name" class="detail-title">Nama Game</h2>
+                    <p class="detail-desc">Top up otomatis 24/7. Silakan lengkapi formulir di samping untuk melakukan pembelian item favoritmu.</p>
+                    <div class="info-badges">
+                        <span class="badge">⚡ Proses Instan</span>
+                        <span class="badge">🔒 Aman & Legal</span>
+                    </div>
+                </div>
+
+                <div class="form-panel">
+                    <div class="glass-card form-step-card">
+                        <div class="step-header">
+                            <span class="step-num">1</span>
+                            <h3>Lengkapi Data Akun</h3>
+                        </div>
+                        <div class="form-group-row" id="inputs-container">
+                            </div>
+                        <small class="input-helper">Pastikan ID yang Anda masukkan sudah benar untuk menghindari kesalahan pengiriman.</small>
+                    </div>
+
+                    <div class="glass-card form-step-card margin-top-lg">
+                        <div class="step-header">
+                            <span class="step-num">2</span>
+                            <h3>Pilih Nominal Top Up</h3>
+                        </div>
+                        <div class="nominal-grid" id="nominal-container">
+                            </div>
+                    </div>
+
+                    <div class="glass-card form-step-card margin-top-lg">
+                        <div class="step-header">
+                            <span class="step-num">3</span>
+                            <h3>Pilih Metode Pembayaran</h3>
+                        </div>
+                        <div class="payment-list" id="payment-container">
+                            </div>
+                    </div>
+
+                    <div class="checkout-action-card margin-top-lg">
+                        <button class="btn-primary checkout-submit-btn" onclick="processCheckout()">
+                            Beli Sekarang ⚡
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-check" class="view-section hidden">
+            <div class="invoice-checker-wrap glass-card max-width-md center-block">
+                <h3 class="text-center text-lg">Cek Status Transaksi</h3>
+                <p class="text-center text-muted margin-bottom-md">Masukkan nomor invoice Anda untuk melacak status pesanan secara real-time</p>
+                
+                <div class="search-box-group">
+                    <input type="text" id="check-invoice-input" placeholder="Contoh: DZ-20260628-8741" class="form-control-input">
+                    <button class="btn-primary btn-search" onclick="handleSearchInvoice()">Cari Pesanan</button>
+                </div>
+            </div>
+
+            <div id="invoice-result-card" class="invoice-result-card glass-card max-width-md center-block margin-top-lg hidden">
+                </div>
+        </section>
+
+        <section id="view-admin" class="view-section hidden">
+            <div class="admin-dashboard-wrap glass-card">
+                <div class="admin-header">
+                    <div>
+                        <h3>👑 Admin Dashboard Panel</h3>
+                        <p class="text-muted">Kelola semua transaksi, ubah status, atau lakukan pembersihan data LocalStorage</p>
+                    </div>
+                    <button class="btn-danger-outline" onclick="clearAllTransactions()">Reset Semua Data</button>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Invoice</th>
+                                <th>Tanggal</th>
+                                <th>Game</th>
+                                <th>User ID / Server</th>
+                                <th>Produk</th>
+                                <th>Harga</th>
+                                <th>Pembayaran</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="payment-modal" class="modal-overlay hidden">
+        <div class="modal-card glass-card">
+            <div class="modal-header">
+                <h3>Detail Pembayaran Invoice</h3>
+                <button class="close-modal-btn" onclick="closePaymentModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-payment-body">
+                </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closePaymentModal()">Tutup Halaman</button>
+                <button class="btn-primary" onclick="confirmPaymentFromModal()">Saya Sudah Bayar ✅</button>
+            </div>
+        </div>
+    </div>
+
+    <a href="https://wa.me/6281234567890?text=Halo%20Danzy%20Store%2C%20saya%20butuh%20bantuan%20terkait%20top%20up" class="whatsapp-float-btn" target="_blank" rel="noopener noreferrer" title="Hubungi CS WhatsApp">
+        <svg viewBox="0 0 24 24" class="whatsapp-icon">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397 0 11.966 0c3.178.001 6.169 1.24 8.424 3.496 2.254 2.256 3.491 5.249 3.491 8.425 0 6.571-5.337 11.917-11.905 11.917-2.002-.001-3.97-.504-5.713-1.463L0 24zm6.602-4.047l.413.245c1.516.9 3.447 1.373 5.432 1.374 5.467 0 9.913-4.421 9.915-9.87.001-2.641-1.03-5.124-2.904-6.999-1.874-1.874-4.36-2.906-7.005-2.906-5.474 0-9.922 4.422-9.924 9.873-.001 1.905.492 3.766 1.43 5.39l.268.464-.993 3.627 3.72-.976zm11.168-5.326c-.302-.151-1.785-.882-2.057-.981-.272-.099-.471-.149-.669.149-.198.297-.768.981-.941 1.179-.173.198-.347.223-.649.072-.302-.151-1.275-.47-2.429-1.499-.897-.8-1.502-1.788-1.678-2.09-.176-.302-.019-.465.132-.614.136-.134.302-.352.453-.529.151-.177.201-.302.302-.504.101-.202.05-.377-.025-.529-.075-.152-.669-1.611-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.785-.73 2.033-1.433.248-.704.248-1.311.173-1.433-.074-.122-.272-.198-.574-.349z"/>
+        </svg>
+    </a>
+
+    <script src="database.js"></script>
+</body>
+</html>
